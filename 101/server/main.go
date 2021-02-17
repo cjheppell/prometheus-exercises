@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -26,10 +28,13 @@ func gauge(w http.ResponseWriter, req *http.Request) {
 }
 
 func histogram(w http.ResponseWriter, req *http.Request) {
+	delayTime := rand.Intn(10)
+	time.Sleep(time.Duration(delayTime) * time.Second)
 	fmt.Fprintf(w, "Hello from the histogram route\n")
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	http.HandleFunc("/counter", counter)
 	http.HandleFunc("/gauge", gauge)
 	http.HandleFunc("/histogram", histogram)
