@@ -4,10 +4,20 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+var (
+	counterRequestsProcessed = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "prom101_server_counter_requests_total",
+		Help: "The total number of processed counter requests events",
+	})
+)
+
 func counter(w http.ResponseWriter, req *http.Request) {
+	counterRequestsProcessed.Inc()
 	fmt.Fprintf(w, "Hello from the counter route\n")
 }
 
