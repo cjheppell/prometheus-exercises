@@ -1,9 +1,12 @@
 FROM golang:1.15-alpine
 
 WORKDIR /go/src/app
-COPY . .
+ADD go.mod go.mod
 
-RUN go get -d -v ./...
+RUN go mod download
+
+ADD . .
+
 RUN go install -v ./...
 
 CMD ["server"]

@@ -19,15 +19,19 @@ var (
 )
 
 func counter(w http.ResponseWriter, req *http.Request) {
-	counterRequestsProcessed.Inc()
+	isBadRequest := rand.Intn(3) == 1
+	if isBadRequest {
+		w.WriteHeader(400)
+	}
 	fmt.Fprintf(w, "Hello from the counter route\n")
+	counterRequestsProcessed.Inc()
 }
 
-func guageStart(w http.ResponseWriter, req *http.Request) {
+func gaugeStart(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Hello from the gauge start route\n")
 }
 
-func guageStop(w http.ResponseWriter, req *http.Request) {
+func gaugeStop(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Hello from the gauge stop route\n")
 }
 
@@ -40,8 +44,8 @@ func histogram(w http.ResponseWriter, req *http.Request) {
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	http.HandleFunc("/counter", counter)
-	http.HandleFunc("/start", guageStart)
-	http.HandleFunc("/stop", guageStop)
+	http.HandleFunc("/start", gaugeStart)
+	http.HandleFunc("/stop", gaugeStop)
 	http.HandleFunc("/histogram", histogram)
 
 	http.Handle("/metrics", promhttp.Handler())
